@@ -1,7 +1,7 @@
 import functools
 import re
+from src.err.pattern_not_match_error import PatternNotMatchError
 
-from src.pattern_matcher import sub_sturct_match
 
 
 class Transformer(object):
@@ -75,14 +75,14 @@ class Transformer(object):
         """
         match = self.pattern.match(self.text)
         if match is None:
-            return "Empty-body"
+            raise PatternNotMatchError(self.text, self.pattern.pattern)
         else:
             return match.group(self.group_id)
 
     def catch_tag_from_text(self):
         match = self.pattern.match(self.text)
         if match is None:
-            return ""
+            raise PatternNotMatchError(self.text, self.pattern.pattern)
         else:
             return self.tag_transfrom(match.group(self.tag_group_id)
                                       )
