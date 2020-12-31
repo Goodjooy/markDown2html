@@ -21,8 +21,6 @@ class DoubleMetaTransformer(Transformer):
         self.extra_id = 2
         self.extra_name = "href"
 
-        self.tag_limitations[self.extra_name] = ""
-
     def generateExtraLimitation(self):
         match = self.pattern.match(self.text)
         if match is None:

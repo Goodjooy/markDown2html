@@ -28,6 +28,7 @@ class PatternMatcher(object):
         self.indent_lenght = 4
 
     def addCatcher(self, catcher):
+        catcher.setMatcher(self)
         self.catchers.append(catcher)
 
     def matchCatchers(self, file_handle: TextIOWrapper):

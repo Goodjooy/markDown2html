@@ -12,10 +12,12 @@ class Catcher(object):
 
     def __init__(self, tag_name="div") -> None:
         self.catched = True
-        self.pattern = re.compile(r"(.*)", re.IGNORECASE)
+        self.pattern = re.compile(r"\n", re.IGNORECASE)
 
         self.tag_name = tag_name
         self.extra_features = []
+
+        self.marcher = ...
 
     @staticmethod
     def faliureCatcher():
@@ -26,16 +28,20 @@ class Catcher(object):
         t.catched = False
         return t
 
+    def setMatcher(self, mathcher):
+        self.marcher = mathcher
+
     def matchCatcher(self, fileHandle: TextIOWrapper):
         try:
+            pos = fileHandle.tell()
             text = fileHandle.readline()
             matcher = self.pattern.match(text)
             if matcher is None:
                 return False
             return True
         finally:
-            pos = fileHandle.tell()
-            fileHandle.seek(pos-len(text))
+            if self.catched:
+                fileHandle.seek(pos)
 
     def getMatcherCatcherMatcher(self, text):
         return self.pattern.search(text)
@@ -67,21 +73,23 @@ class Catcher(object):
                                  fileHandle: TextIOWrapper,
                                  feature: ExtraFeatureStruct):
         text = self.generateCatchStringSlice(fileHandle)
-        t = Transformer(text, self.tag_name,
-                        feature.id_name, feature.class_name,
-                        **feature.othor_featrues)
-        t.setCatcher(self)
+        t = self.generateSubStructMatchTransformer(text, feature)
         return t
 
     def substructMatchCatcher(self, text: str):
         return self.pattern.search(text) is not None
 
     def generateSubStructMatchTransformer(self,
-                                          text, text_range: tuple,
+                                          text,
                                           feature: ExtraFeatureStruct):
-        t = Transformer(text, self.tag_name, feature.id_name,
-                        feature.class_name, **feature.othor_featrues)
-        return t, text_range
+        t = Transformer(text, self.tag_name,
+                        feature.id_name, feature.class_name,
+                        **feature.othor_featrues)
+        t.setCatcher(self)
+        t.setMatcher = self.marcher
+        t.feature = feature
+        t.pattern = self.pattern
+        return t
 
     def matchExtraFeatures(self, privous_transformer,
                            parent_transformer,

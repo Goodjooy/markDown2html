@@ -1,6 +1,9 @@
 import functools
 import re
+from src.substrunct_catcher import SubstructCatcherStruct
+from src.extra_feature import ExtraFeatureStruct
 from src.err.pattern_not_match_error import PatternNotMatchError
+
 
 class Transformer(object):
     def __init__(self, text,
@@ -23,7 +26,10 @@ class Transformer(object):
 
         self.tag_limitations = tag_limitations
 
-        self.catch=...
+        self.catch = None
+        self.match = None
+
+        self.feature: ExtraFeatureStruct = None
 
     def generateTag(self):
         if self.need_tag_info_from_text():
@@ -39,15 +45,12 @@ class Transformer(object):
         class_limit = (" class=\"%s\"" %
                        self.class_name) if self.need_class() else ""
         return "<{0}{1}{2}{3}>%s</{0}>".format(self.generateTag(),
-                                                 id_limit,
-                                                 class_limit,
-                                                 tag_limits)
+                                               id_limit,
+                                               class_limit,
+                                               tag_limits)
 
     def generateTagBody(self):
-        if self.has_substruct():
-            return self.catch_substruct().generateHtml()
-        else:
-            return self.catch_body()
+        return self.generateBodyStruct()
 
     def generateHtml(self):
         return self.generateEmptyTag() % (self.generateTagBody())
@@ -64,13 +67,24 @@ class Transformer(object):
         """
         return self.class_name != None
 
-    def has_substruct(self):
-        return False
+    def generateBodyStruct(self):
+        body = self.catch_body()
+        substructs = self.catch_substruct(body)
 
-    def catch_substruct(self):
-        pass
-    def generate_substrunct(self):
-        pass
+        for substruct in substructs:
+            substruct: SubstructCatcherStruct
+            html = substruct.catcher.generateSubStructMatchTransformer(
+                body[substruct.start_pos:substruct.end_pos],
+                self.feature).generateHtml()
+
+            body.replace(
+                body[substruct.start_pos:substruct.end_pos], html)
+        return body
+
+    def catch_substruct(self, text):
+        if self.match is None:
+            return []
+        return self.match.subSturctMatchCatchers(text)
 
     def catch_body(self):
         """
@@ -97,6 +111,9 @@ class Transformer(object):
 
     def tag_transfrom(self, data):
         return str(len(data))
-    
-    def setCatcher(self,catcher):
-        self.catch=catcher
+
+    def setCatcher(self, catcher):
+        self.catch = catcher
+
+    def setMatcher(self, match):
+        self.match = match
