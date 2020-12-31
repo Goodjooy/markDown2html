@@ -1,4 +1,3 @@
-import src.transformers.transformer
 
 
 class ExtraFeatureStruct(object):

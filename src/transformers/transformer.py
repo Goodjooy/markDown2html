@@ -2,8 +2,6 @@ import functools
 import re
 from src.err.pattern_not_match_error import PatternNotMatchError
 
-
-
 class Transformer(object):
     def __init__(self, text,
                  tag_name="div",
@@ -25,6 +23,8 @@ class Transformer(object):
 
         self.tag_limitations = tag_limitations
 
+        self.catch=...
+
     def generateTag(self):
         if self.need_tag_info_from_text():
             return self.tag_name.format(self.catch_tag_from_text())
@@ -33,11 +33,15 @@ class Transformer(object):
 
     def generateEmptyTag(self):
         tag_limits = functools.reduce(
-            lambda x, y: f"{x} {y[0]}=\"{y[1]}\"", self.tag_limitations.items(), "")
-        id_limit = ("id=\"%s\"" % self.id_name) if self.need_id() else ""
-        class_limit = ("class=\"%s\"" %
+            lambda x, y: f"{x} {y[0]}=\"{y[1]}\"",
+            self.tag_limitations.items(), "")
+        id_limit = (" id=\"%s\"" % self.id_name) if self.need_id() else ""
+        class_limit = (" class=\"%s\"" %
                        self.class_name) if self.need_class() else ""
-        return "<{0} {1} {2}{3}>%s</{0}>".format(self.generateTag(), id_limit, class_limit, tag_limits)
+        return "<{0}{1}{2}{3}>%s</{0}>".format(self.generateTag(),
+                                                 id_limit,
+                                                 class_limit,
+                                                 tag_limits)
 
     def generateTagBody(self):
         if self.has_substruct():
@@ -64,8 +68,7 @@ class Transformer(object):
         return False
 
     def catch_substruct(self):
-        return sub_sturct_match()
-
+        pass
     def generate_substrunct(self):
         pass
 
@@ -94,3 +97,6 @@ class Transformer(object):
 
     def tag_transfrom(self, data):
         return str(len(data))
+    
+    def setCatcher(self,catcher):
+        self.catch=catcher

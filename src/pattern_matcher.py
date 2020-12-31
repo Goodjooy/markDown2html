@@ -4,6 +4,7 @@ from io import TextIOWrapper
 import re
 
 from src.catchers.catcher import Catcher
+
 from src.substrunct_catcher import SubstructCatcherStruct
 
 
@@ -25,8 +26,6 @@ class PatternMatcher(object):
         self.catchers = []
 
         self.indent_lenght = 4
-
-        self.privous_
 
     def addCatcher(self, catcher):
         self.catchers.append(catcher)
@@ -50,15 +49,16 @@ class PatternMatcher(object):
         cahtcher_struct = self.update_substruct_catcher(
             self.findMaxLenghtMatchCatcher(text), start_pos)
         start_pos = cahtcher_struct.end_pos
-        all_substructs.append(cahtcher_struct)
 
         while cahtcher_struct.is_find:
+            all_substructs.append(cahtcher_struct)
+
             cahtcher_struct = self.update_substruct_catcher(
                 self.findMaxLenghtMatchCatcher(text[start_pos:]),
                 start_pos=start_pos
             )
+
             start_pos = cahtcher_struct.end_pos
-            all_substructs.append(cahtcher_struct)
 
         return all_substructs
 
@@ -73,9 +73,11 @@ class PatternMatcher(object):
             catcher: Catcher
             matcher = catcher.getMatcherCatcherMatcher(text)
             if matcher is not None:
-                match_len = matcher.group(0)
+                match_len = len(matcher.group(0))
                 start = matcher.start(0)
-                if(max_lenght <= match_len and min_start >= start):
+                if(max_lenght <= match_len
+                   and ((min_start == -1) or
+                        (min_start >= start))):
                     max_lenght = match_len
                     min_start = start
                     catcher_ret = catcher
@@ -108,7 +110,7 @@ class PatternMatcher(object):
         """
         count = 0
         char = file_handle.read(1)
-        while re.match(r'\s', char):
+        while re.match(r'[^\n\S]', char):
             count += 1
 
             char = file_handle.read(1)

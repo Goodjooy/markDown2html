@@ -22,15 +22,13 @@ def readline(str_io):
 
 
 class CatcherTest(unittest.TestCase):
-    @unittest.skip("pass")
     def test002_generate_catch_string(self):
         string = catch.generateCatchStringSlice(str_io)
 
         self.assertEqual("bbbb\n", readline(str_io))
-        self.assertEqual("abcdefgd", string)
+        self.assertEqual("abcdefgd\n", string)
 
-        pos = str_io.tell()
-        str_io.seek(pos-len(string))
+        str_io.seek(0)
 
     def test001_match_catcher_not_change_file_fp(self):
         sta = catch.matchCatcher(str_io)
@@ -38,8 +36,8 @@ class CatcherTest(unittest.TestCase):
         self.assertEqual("abcdefgd\n", readline(str_io))
         self.assertTrue(sta)
 
-    @unittest.skip("chang")
     def test003_generate_transformer(self):
+        str_io.seek(0)
         f = ExtraFeatureStruct(None, None, None,
                                "test-id", "test-class", test_ex="test-ex")
         t = catch.generateMatchTransfromer(str_io, f)
@@ -59,15 +57,15 @@ class CatcherTest(unittest.TestCase):
         self.assertEqual(is_ok, False)
         self.assertEqual(feature.empty, ExtraFeatureStruct.NoneFeature().empty)
 
-    @unittest.skip("skep")
     def test006_read_end_action(self):
         a = str_io.readline()
         b = str_io.readline()
         c = str_io.readline()
         e = str_io.readline()
 
-        print(a, b, c, e, str_io.readable())
+        #print(a, b, c, e, str_io.readable())
 
+        str_io.seek(0)
 
     def test007_match_catcher_len(self):
         lenght = catch.matchCatherLenght(readline(str_io))
@@ -75,7 +73,9 @@ class CatcherTest(unittest.TestCase):
         self.assertEqual(9, lenght)
 
     def test008_regex_match(self):
-        matcher=re.match(r"ddd","aadddaaddd")
+        matcher = re.match(r"ddd", "aadddaaddd")
 
-        self.assertEqual(matcher,None)
+        self.assertEqual(matcher, None)
+
+
 unittest.main()

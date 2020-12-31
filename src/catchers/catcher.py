@@ -70,7 +70,7 @@ class Catcher(object):
         t = Transformer(text, self.tag_name,
                         feature.id_name, feature.class_name,
                         **feature.othor_featrues)
-        t.pattern = self.pattern
+        t.setCatcher(self)
         return t
 
     def substructMatchCatcher(self, text: str):
